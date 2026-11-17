@@ -1,7 +1,7 @@
 @echo off
 REM =====================================================================
 REM  Input Tester - keyboard / mouse / controller bench diagnostic
-REM  Copyright (c) 2026 Tamim   (GitHub: theguyisherebtw  Snapchat: tamim4561)
+REM  Copyright (c) 2026 Tamim   (GitHub: theguyisherebtw)
 REM  Open source under the MIT License (see LICENSE).
 REM  Captures input only while focused. Writes no files. No network use.
 REM =====================================================================
@@ -14,7 +14,6 @@ exit /b
 #
 #  Copyright (c) 2026 Tamim
 #  GitHub:   https://github.com/theguyisherebtw
-#  Snapchat: tamim4561
 #
 #  Open source under the MIT License (see LICENSE).
 #  Free to use, study, modify, and share.

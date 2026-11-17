@@ -99,7 +99,6 @@ Everything is in the single `.bat` file. There is nothing else to trust.
 
 Made by **Tamim**
 - GitHub: [@theguyisherebtw](https://github.com/theguyisherebtw)
-- Snapchat: **tamim4561**
 
 Issues, ideas, and pull requests are welcome.
 
