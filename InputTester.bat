@@ -353,14 +353,22 @@ $msTop.Controls.AddRange(@($lblMInfo,$lblScroll,$lblPos,$lblMChat,$lblMInt,$btnM
 $ms = New-Object CapturePanel
 $ms.Dock='Fill'; $ms.BackColor=[Drawing.Color]::FromArgb(18,20,25)
 
-$mHint = New-Object Windows.Forms.Label
-$mHint.Text='move / click / scroll here'; $mHint.AutoSize=$true; $mHint.ForeColor=[Drawing.Color]::FromArgb(70,75,88)
-$mHint.Left=20; $mHint.Top=14; $mHint.BackColor=[Drawing.Color]::Transparent
-$ms.Controls.Add($mHint)
-
-$mDot = New-Object Windows.Forms.Label
-$mDot.Width=12; $mDot.Height=12; $mDot.BackColor=$accent; $mDot.Left=-20; $mDot.Top=-20
-$ms.Controls.Add($mDot)
+# The cursor dot + hint are PAINTED directly on the panel (not child controls),
+# so they never sit on top of the panel and swallow your clicks.
+$msPos = @{ x = -20; y = -20; inside = $false }
+$ms.Add_Paint({ param($s,$e)
+  $g = $e.Graphics
+  $g.Clear([Drawing.Color]::FromArgb(18,20,25))
+  $hb = New-Object Drawing.SolidBrush([Drawing.Color]::FromArgb(70,75,88))
+  $g.DrawString('move / click / scroll anywhere in this area', $fontUI, $hb, 14, 12)
+  $hb.Dispose()
+  if($msPos.inside){
+    $g.SmoothingMode = 'AntiAlias'
+    $br = New-Object Drawing.SolidBrush($accent)
+    $g.FillEllipse($br, $msPos.x-6, $msPos.y-6, 12, 12)
+    $br.Dispose()
+  }
+})
 
 $mstate = @{ up=0; down=0; chatter=0; last=@{}; cnt=@{} }
 foreach($k in $mbOrder){ $mstate.cnt[$k]=0 }
@@ -396,8 +404,10 @@ $ms.Add_MouseUp({ param($s,$e)
 })
 $ms.Add_MouseMove({ param($s,$e)
   $lblPos.Text = "Pos:  $($e.X), $($e.Y)"
-  $mDot.Left = $e.X - 6; $mDot.Top = $e.Y - 6
+  $msPos.x = $e.X; $msPos.y = $e.Y; $msPos.inside = $true
+  $ms.Invalidate()
 })
+$ms.Add_MouseLeave({ $msPos.inside = $false; $ms.Invalidate() })
 $ms.Add_MouseWheel({ param($s,$e)
   if($e.Delta -gt 0){ $mstate.up++ } elseif($e.Delta -lt 0){ $mstate.down++ }
   $lblScroll.Text = "Scroll  up: $($mstate.up)   down: $($mstate.down)"
